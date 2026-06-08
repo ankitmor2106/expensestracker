@@ -1,0 +1,962 @@
+/* =========================================================
+   EXPENSE TRACKER — style.css
+   ========================================================= */
+
+/* ----------------------------------------------------------
+   1. CSS CUSTOM PROPERTIES (DESIGN TOKENS)
+   ---------------------------------------------------------- */
+:root {
+  --color-bg:           #f5f2ee;
+  --color-surface:      #ffffff;
+  --color-border:       #e8e2d9;
+  --color-border-light: #f0ece6;
+
+  --color-text-primary:   #1c1714;
+  --color-text-secondary: #6b5e52;
+  --color-text-muted:     #9e8f82;
+
+  --color-brand:        #5c3d2e;
+  --color-brand-light:  #7a5040;
+  --color-brand-subtle: #f0e8e0;
+
+  --color-income:        #166534;
+  --color-income-bg:     #dcfce7;
+  --color-income-border: #bbf7d0;
+
+  --color-expense:        #991b1b;
+  --color-expense-bg:     #fee2e2;
+  --color-expense-border: #fecaca;
+
+  --color-balance-bg:    #5c3d2e;
+  --color-balance-text:  #ffffff;
+  --color-balance-muted: rgba(255, 255, 255, 0.7);
+
+  --shadow-sm:  0 1px 3px rgba(92,61,46,.06), 0 1px 2px rgba(92,61,46,.04);
+  --shadow-md:  0 4px 12px rgba(92,61,46,.10), 0 2px 4px rgba(92,61,46,.06);
+  --shadow-lg:  0 10px 30px rgba(92,61,46,.12), 0 4px 8px rgba(92,61,46,.06);
+
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+
+  --transition: 0.18s ease;
+
+  /* FIX: Changed fonts — DM Sans + Lora instead of Inter/system defaults */
+  --font-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
+}
+
+/* ----------------------------------------------------------
+   2. RESET & BASE
+   ---------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+ul { list-style: none; }
+
+button { cursor: pointer; font-family: inherit; }
+
+input, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ----------------------------------------------------------
+   3. LAYOUT — HEADER
+   ---------------------------------------------------------- */
+.header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-brand);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-serif);
+}
+
+/* ----------------------------------------------------------
+   3b. BUTTON GROUP (joined pill: Import | Export)
+   ---------------------------------------------------------- */
+.btn-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;  /* clips children to the pill shape */
+  background: var(--color-surface);
+}
+
+/* Each item inside the group loses its own border and radius */
+.btn-group-item,
+.btn-group-item.btn,
+.btn-group .btn {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent;
+}
+
+.btn-group-item:hover,
+.btn-group .btn:hover {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+}
+
+.btn-group-divider {
+  width: 1px;
+  background: var(--color-border);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* ---------------------------------------------------------- */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ----------------------------------------------------------
+   5. PAGE TOP (title + period tabs)
+   ---------------------------------------------------------- */
+.page-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* Period Tabs */
+.period-tabs {
+  display: flex;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 2px;
+}
+
+.period-tab {
+  padding: 7px 18px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+}
+
+.period-tab:hover {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+}
+
+.period-tab.active {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+.period-tab:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------
+   6. SUMMARY CARDS
+   ---------------------------------------------------------- */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.card-balance {
+  background: var(--color-balance-bg);
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.card-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+}
+
+.card-balance .card-label {
+  color: var(--color-balance-muted);
+}
+
+.card-amount {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-bottom: 8px;
+  /* FIX: Prevent long INR numbers from overflowing */
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.card-balance .card-amount {
+  color: var(--color-balance-text);
+}
+
+.card-meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.card-balance .card-meta {
+  color: var(--color-balance-muted);
+}
+
+.income-color  { color: var(--color-income); }
+.expense-color { color: var(--color-expense); }
+
+/* Badge icons next to income/expense label */
+.badge-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.badge-income {
+  background: var(--color-income-bg);
+  color: var(--color-income);
+}
+
+.badge-expense {
+  background: var(--color-expense-bg);
+  color: var(--color-expense);
+}
+
+/* ----------------------------------------------------------
+   7. CONTENT GRID
+   ---------------------------------------------------------- */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+.content-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ----------------------------------------------------------
+   8. FORM
+   ---------------------------------------------------------- */
+.form-card { }
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.section-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.form-control {
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(92,61,46,.12);
+  background: var(--color-surface);
+}
+
+.form-control.error {
+  border-color: var(--color-expense);
+}
+
+select.form-control {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239e8f82' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* FIX: Date input styling — normalize across browsers */
+input[type="date"].form-control {
+  -webkit-appearance: none;
+  appearance: none;
+  color-scheme: light;
+}
+
+.amount-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.amount-prefix {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  pointer-events: none;
+  font-family: var(--font-serif);
+}
+
+.amount-input {
+  padding-left: 28px;
+}
+
+/* FIX: Remove spinner from number inputs (kept for type=text too) */
+.amount-input::-webkit-inner-spin-button,
+.amount-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+/* Form error */
+.form-error {
+  font-size: 13px;
+  color: var(--color-expense);
+  min-height: 20px;
+  margin-bottom: 4px;
+}
+
+/* ----------------------------------------------------------
+   9. BUTTONS
+   ---------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: background var(--transition), color var(--transition),
+              border-color var(--transition), box-shadow var(--transition),
+              transform 0.1s ease;
+  text-decoration: none;
+  /* FIX: label elements used as buttons need cursor pointer */
+  cursor: pointer;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--color-brand);
+  color: #fff;
+  border-color: var(--color-brand);
+}
+
+.btn-primary:hover {
+  background: var(--color-brand-light);
+  border-color: var(--color-brand-light);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.btn-outline:hover {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+  border-color: var(--color-brand-subtle);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+  padding: 6px;
+}
+
+.btn-ghost:hover {
+  background: var(--color-expense-bg);
+  color: var(--color-expense);
+}
+
+.btn-block { width: 100%; }
+
+/* ----------------------------------------------------------
+   10. TRANSACTION LIST
+   ---------------------------------------------------------- */
+.list-card { }
+
+/* ------ Expandable list body ------ */
+/* Each row is ~68px tall (13px padding top+bottom + ~42px content).
+   Show 5 rows = 5 × 68px = 340px collapsed height. */
+:root {
+  --list-row-h: 68px;
+  --list-collapsed-rows: 5;
+  --list-collapsed-h: calc(var(--list-row-h) * var(--list-collapsed-rows));
+}
+
+.list-body {
+  max-height: var(--list-collapsed-h);
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.list-body.expanded {
+  /* Large enough that it'll never be capped in practice */
+  max-height: 9999px;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade gradient at the bottom of the collapsed list */
+.list-expand-footer {
+  position: relative;
+  margin-top: -2px;
+}
+
+.list-fade {
+  height: 52px;
+  background: linear-gradient(to bottom, transparent, var(--color-surface));
+  pointer-events: none;
+  margin-top: -52px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hide the fade when expanded */
+.list-body.expanded ~ .list-expand-footer .list-fade {
+  display: none;
+}
+
+.list-expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px;
+  margin-top: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.list-expand-btn:hover {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+  border-color: var(--color-brand-subtle);
+}
+
+.expand-caret {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.list-expand-btn[aria-expanded="true"] .expand-caret {
+  transform: rotate(180deg);
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--color-border-light);
+  animation: slideIn 0.22s ease;
+}
+
+.transaction-item:last-child { border-bottom: none; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tx-badge {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.tx-badge.income  { background: var(--color-income-bg);  color: var(--color-income); }
+.tx-badge.expense { background: var(--color-expense-bg); color: var(--color-expense); }
+
+.tx-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tx-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.tx-category {
+  font-size: 11.5px;
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-weight: 500;
+}
+
+.tx-date {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+
+.tx-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.tx-amount {
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-serif);
+}
+
+.tx-amount.income  { color: var(--color-income); }
+.tx-amount.expense { color: var(--color-expense); }
+
+.tx-delete {
+  padding: 6px;
+  border-radius: var(--radius-sm);
+}
+
+/* ----------------------------------------------------------
+   11. EMPTY STATES
+   FIX: Removed display:flex from here — now controlled via inline style in JS
+        so it doesn't fight with the `hidden` attribute
+   ---------------------------------------------------------- */
+.empty-state {
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.empty-state svg {
+  opacity: 0.4;
+}
+
+.empty-state p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ----------------------------------------------------------
+   12. CHART
+   ---------------------------------------------------------- */
+.chart-card {
+  position: sticky;
+  top: 90px;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  margin: 20px auto;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-name {
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.legend-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.legend-amount {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.legend-pct {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+
+/* ----------------------------------------------------------
+   13. TOAST NOTIFICATIONS
+   ---------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  background: var(--color-text-primary);
+  color: #fff;
+  padding: 13px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.22s ease;
+  max-width: 320px;
+}
+
+.toast.success { border-left: 4px solid #22c55e; }
+.toast.error   { border-left: 4px solid #ef4444; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(10px); }
+}
+
+/* ----------------------------------------------------------
+   14a. EXPORT DROPDOWN
+   ---------------------------------------------------------- */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-caret {
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+
+.dropdown-trigger[aria-expanded="true"] .dropdown-caret {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 170px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  z-index: 200;
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  pointer-events: none;
+}
+
+.dropdown-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition), color var(--transition);
+  font-family: var(--font-sans);
+}
+
+.dropdown-item:hover {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+}
+
+.dropdown-item + .dropdown-item {
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ----------------------------------------------------------
+   14b. CUSTOM DATE PICKER
+   ---------------------------------------------------------- */
+.date-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.date-display-input {
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+  cursor: pointer;
+  caret-color: transparent; /* readonly, no blinking cursor */
+}
+
+.date-display-input:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(92,61,46,.12);
+  background: var(--color-surface);
+}
+
+/* The real date input is invisible but still functional */
+.date-hidden-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.date-clear-btn {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--transition), color var(--transition);
+  z-index: 1;
+}
+
+.date-clear-btn:hover {
+  background: var(--color-expense-bg);
+  color: var(--color-expense);
+}
+
+/* ----------------------------------------------------------
+   15. RESPONSIVE
+   ---------------------------------------------------------- */
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .main { padding: 24px 16px 40px; }
+
+  .header-inner { padding: 12px 16px; }
+
+  .page-top { flex-direction: column; align-items: stretch; }
+
+  .period-tabs { justify-content: stretch; }
+  .period-tab  { flex: 1; text-align: center; }
+
+  .summary-grid { grid-template-columns: 1fr; }
+
+  .form-row { grid-template-columns: 1fr; }
+
+  .card-amount { font-size: 22px; }
+
+  /* Smaller export group on mobile */
+  .export-buttons {
+    gap: 0;
+  }
+  .btn-group .btn,
+  .btn-group-item {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+}
