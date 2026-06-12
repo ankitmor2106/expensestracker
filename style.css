@@ -116,9 +116,6 @@ input, select {
 
 /* ----------------------------------------------------------
    3b. BUTTON GROUP (joined pill: Import | Export)
-   FIX: Removed overflow:hidden — it was clipping the dropdown
-        menu so it could never appear outside the button group.
-        Border-radius is now applied to first/last children instead.
    ---------------------------------------------------------- */
 .btn-group {
   display: flex;
@@ -126,11 +123,9 @@ input, select {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
-  position: relative; /* so z-index stacking works for children */
+  position: relative;
 }
 
-/* Apply border-radius to the first and last visible items so the
-   pill shape is preserved without needing overflow:hidden */
 .btn-group > :first-child,
 .btn-group > :first-child > .btn {
   border-top-left-radius: var(--radius-sm) !important;
@@ -143,7 +138,6 @@ input, select {
   border-bottom-right-radius: var(--radius-sm) !important;
 }
 
-/* Each item inside the group loses its own border and radius */
 .btn-group-item,
 .btn-group-item.btn,
 .btn-group .btn {
@@ -517,33 +511,56 @@ input[type="date"].form-control {
   --list-collapsed-h: calc(var(--list-row-h) * var(--list-collapsed-rows));
 }
 
+/* ----------------------------------------------------------
+   SCROLLABLE TRANSACTION LIST BODY
+   - Fixed height showing ~5 rows
+   - Thin custom scrollbar that matches the warm earthy palette
+   - overflow-y: auto adds the scrollbar only when needed
+   ---------------------------------------------------------- */
 .list-body {
   max-height: var(--list-collapsed-h);
-  overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
+  padding-right: 4px; /* breathing room so scrollbar doesn't overlap items */
+
+  /* Firefox — thin scrollbar with brand colours */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
 
+/* Webkit (Chrome, Safari, Edge) custom scrollbar */
+.list-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list-body::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 99px;
+}
+
+.list-body::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 99px;
+}
+
+.list-body::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Expanded state removes the height cap so all items are reachable */
 .list-body.expanded {
-  max-height: 9999px;
-  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: none;
+  overflow-y: auto;
 }
 
 .list-expand-footer {
   position: relative;
-  margin-top: -2px;
+  margin-top: 2px;
 }
 
+/* Hide the fade overlay — not needed with a scrollbar */
 .list-fade {
-  height: 52px;
-  background: linear-gradient(to bottom, transparent, var(--color-surface));
-  pointer-events: none;
-  margin-top: -52px;
-  position: relative;
-  z-index: 1;
-}
-
-.list-body.expanded ~ .list-expand-footer .list-fade {
   display: none;
 }
 
@@ -796,11 +813,6 @@ input[type="date"].form-control {
 
 /* ----------------------------------------------------------
    14a. EXPORT DROPDOWN
-   FIX: z-index raised to ensure it renders above all other
-        elements when open. The dropdown is positioned relative
-        to .dropdown which is inside .btn-group — since we
-        removed overflow:hidden from .btn-group, the menu can
-        now visually escape the button group container.
    ---------------------------------------------------------- */
 .dropdown {
   position: relative;
