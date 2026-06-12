@@ -57,7 +57,8 @@ function saveToStorage(transactions) {
    4. DATA HELPERS
    ---------------------------------------------------------- */
 function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  // Timestamp base + 9 random chars = extremely low collision probability even in bulk imports
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 11);
 }
 
 function getPeriodStart(period) {
@@ -213,7 +214,9 @@ function renderTransactions() {
   if (filtered.length > LIST_COLLAPSE_THRESHOLD) {
     footer.style.display = "block";
     const isExpanded = listBody.classList.contains("expanded");
-    const hidden = filtered.length - LIST_COLLAPSE_THRESHOLD;
+    // Sync aria-expanded on the button to match actual DOM state after re-render
+    const expandBtn = document.getElementById("list-expand-btn");
+    if (expandBtn) expandBtn.setAttribute("aria-expanded", String(isExpanded));
     label.textContent = isExpanded
       ? "Show less"
       : `Show all ${filtered.length} transactions`;
@@ -339,11 +342,10 @@ function clearFormError() {
 function validateForm(data) {
   if (!data.label.trim()) return "Label is required.";
   if (data.label.trim().length > 100) return "Label must be 100 characters or fewer.";
-  // FIX: Robust amount validation - handle string input from text field
-  const amt = Number(String(data.amount).trim());
-  if (data.amount === "" || data.amount === null || data.amount === undefined) return "Please enter an amount.";
-  if (isNaN(amt)) return "Please enter a valid number.";
-  if (amt <= 0) return "Amount must be greater than zero.";
+  // Validate the already-parsed float so validation and submission use the same value
+  if (data.rawAmount.trim() === "") return "Please enter an amount.";
+  if (isNaN(data.amount)) return "Please enter a valid number.";
+  if (data.amount <= 0) return "Amount must be greater than zero.";
   if (!data.category) return "Please select a category.";
   return null;
 }
@@ -356,11 +358,11 @@ function handleFormSubmit(e) {
   const type     = form.type.value;
   const category = form.category.value;
   const label    = form.label.value.trim();
-  // FIX: Parse amount robustly from text input
+  // Parse amount once — used for both validation and the transaction object
   const rawAmount = form.amount.value;
   const amount    = parseFloat(String(rawAmount).replace(/,/g, "").trim());
 
-  const error = validateForm({ label, amount: rawAmount, category });
+  const error = validateForm({ label, rawAmount, amount, category });
   if (error) {
     showFormError(error);
     return;
@@ -495,12 +497,34 @@ function handleImport(e) {
         const lines = ev.target.result.trim().split("\n");
         // skip header row
         lines.slice(1).forEach((line) => {
-          const parts = line.match(/(".*?"|[^,]+)(?=,|$)/g);
-          if (!parts || parts.length < 6) return;
-          const [id, label, amount, type, category, createdAt] = parts.map((p) =>
-            p.replace(/^"|"$/g, "").replace(/""/g, '"')
-          );
-          imported.push({ id, label, amount: parseFloat(amount), type, category, createdAt });
+          // Proper CSV field parser: handles quoted fields (including those with commas/empty values)
+          const fields = [];
+          let cur = "";
+          let inQuote = false;
+          for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+              if (inQuote && line[i + 1] === '"') { cur += '"'; i++; } // escaped quote
+              else { inQuote = !inQuote; }
+            } else if (ch === "," && !inQuote) {
+              fields.push(cur);
+              cur = "";
+            } else {
+              cur += ch;
+            }
+          }
+          fields.push(cur); // last field
+
+          if (fields.length < 6) return;
+          const [id, label, amount, type, category, createdAt] = fields;
+          imported.push({
+            id:        id.trim(),
+            label:     label.trim(),
+            amount:    parseFloat(amount.trim()),
+            type:      type.trim(),
+            category:  category.trim(),
+            createdAt: createdAt.trim(),
+          });
         });
       } else {
         throw new Error("Unsupported file type. Use .json or .csv");

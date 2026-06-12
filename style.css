@@ -691,6 +691,11 @@ input[type="date"].form-control {
   line-height: 1.6;
 }
 
+.content-right {
+  /* overflow must not be hidden/auto or sticky inside will break */
+  overflow: visible;
+}
+
 /* ----------------------------------------------------------
    12. CHART
    ---------------------------------------------------------- */

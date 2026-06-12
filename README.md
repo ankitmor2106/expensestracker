@@ -158,18 +158,3 @@ The UI uses a warm, earthy colour palette defined as CSS custom properties:
 
 ---
 
-## 🔮 Possible Future Enhancements
-
-- [ ] Edit existing transactions
-- [ ] Recurring transactions
-- [ ] Monthly budget limits per category
-- [ ] Bar/line chart for spending trends over time
-- [ ] Dark mode
-- [ ] PWA support (offline + installable)
-- [ ] Cloud sync / multi-device
-
----
-
-## 📄 License
-
-MIT — free to use, modify, and distribute.
