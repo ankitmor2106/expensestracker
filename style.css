@@ -41,7 +41,6 @@
 
   --transition: 0.18s ease;
 
-  /* FIX: Changed fonts — DM Sans + Lora instead of Inter/system defaults */
   --font-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
   --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
 }
@@ -117,14 +116,31 @@ input, select {
 
 /* ----------------------------------------------------------
    3b. BUTTON GROUP (joined pill: Import | Export)
+   FIX: Removed overflow:hidden — it was clipping the dropdown
+        menu so it could never appear outside the button group.
+        Border-radius is now applied to first/last children instead.
    ---------------------------------------------------------- */
 .btn-group {
   display: flex;
   align-items: stretch;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  overflow: hidden;  /* clips children to the pill shape */
   background: var(--color-surface);
+  position: relative; /* so z-index stacking works for children */
+}
+
+/* Apply border-radius to the first and last visible items so the
+   pill shape is preserved without needing overflow:hidden */
+.btn-group > :first-child,
+.btn-group > :first-child > .btn {
+  border-top-left-radius: var(--radius-sm) !important;
+  border-bottom-left-radius: var(--radius-sm) !important;
+}
+
+.btn-group > :last-child,
+.btn-group > :last-child > .btn {
+  border-top-right-radius: var(--radius-sm) !important;
+  border-bottom-right-radius: var(--radius-sm) !important;
 }
 
 /* Each item inside the group loses its own border and radius */
@@ -265,7 +281,6 @@ input, select {
   color: var(--color-text-primary);
   line-height: 1;
   margin-bottom: 8px;
-  /* FIX: Prevent long INR numbers from overflowing */
   word-break: break-all;
   overflow-wrap: break-word;
 }
@@ -389,7 +404,6 @@ select.form-control {
   padding-right: 36px;
 }
 
-/* FIX: Date input styling — normalize across browsers */
 input[type="date"].form-control {
   -webkit-appearance: none;
   appearance: none;
@@ -415,7 +429,6 @@ input[type="date"].form-control {
   padding-left: 28px;
 }
 
-/* FIX: Remove spinner from number inputs (kept for type=text too) */
 .amount-input::-webkit-inner-spin-button,
 .amount-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -446,7 +459,6 @@ input[type="date"].form-control {
               border-color var(--transition), box-shadow var(--transition),
               transform 0.1s ease;
   text-decoration: none;
-  /* FIX: label elements used as buttons need cursor pointer */
   cursor: pointer;
 }
 
@@ -499,9 +511,6 @@ input[type="date"].form-control {
    ---------------------------------------------------------- */
 .list-card { }
 
-/* ------ Expandable list body ------ */
-/* Each row is ~68px tall (13px padding top+bottom + ~42px content).
-   Show 5 rows = 5 × 68px = 340px collapsed height. */
 :root {
   --list-row-h: 68px;
   --list-collapsed-rows: 5;
@@ -516,12 +525,10 @@ input[type="date"].form-control {
 }
 
 .list-body.expanded {
-  /* Large enough that it'll never be capped in practice */
   max-height: 9999px;
   transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Fade gradient at the bottom of the collapsed list */
 .list-expand-footer {
   position: relative;
   margin-top: -2px;
@@ -536,7 +543,6 @@ input[type="date"].form-control {
   z-index: 1;
 }
 
-/* Hide the fade when expanded */
 .list-body.expanded ~ .list-expand-footer .list-fade {
   display: none;
 }
@@ -670,8 +676,6 @@ input[type="date"].form-control {
 
 /* ----------------------------------------------------------
    11. EMPTY STATES
-   FIX: Removed display:flex from here — now controlled via inline style in JS
-        so it doesn't fight with the `hidden` attribute
    ---------------------------------------------------------- */
 .empty-state {
   flex-direction: column;
@@ -689,11 +693,6 @@ input[type="date"].form-control {
 .empty-state p {
   font-size: 14px;
   line-height: 1.6;
-}
-
-.content-right {
-  /* overflow must not be hidden/auto or sticky inside will break */
-  overflow: visible;
 }
 
 /* ----------------------------------------------------------
@@ -797,6 +796,11 @@ input[type="date"].form-control {
 
 /* ----------------------------------------------------------
    14a. EXPORT DROPDOWN
+   FIX: z-index raised to ensure it renders above all other
+        elements when open. The dropdown is positioned relative
+        to .dropdown which is inside .btn-group — since we
+        removed overflow:hidden from .btn-group, the menu can
+        now visually escape the button group container.
    ---------------------------------------------------------- */
 .dropdown {
   position: relative;
@@ -884,7 +888,7 @@ input[type="date"].form-control {
   padding-left: 32px !important;
   padding-right: 32px !important;
   cursor: pointer;
-  caret-color: transparent; /* readonly, no blinking cursor */
+  caret-color: transparent;
 }
 
 .date-display-input:focus {
@@ -894,7 +898,6 @@ input[type="date"].form-control {
   background: var(--color-surface);
 }
 
-/* The real date input is invisible but still functional */
 .date-hidden-input {
   position: absolute;
   opacity: 0;
@@ -955,7 +958,6 @@ input[type="date"].form-control {
 
   .card-amount { font-size: 22px; }
 
-  /* Smaller export group on mobile */
   .export-buttons {
     gap: 0;
   }
