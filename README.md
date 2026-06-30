@@ -147,6 +147,19 @@ The UI uses a warm, earthy colour palette defined as CSS custom properties:
 
 ---
 
+## 👥 Contributors
+
+| Name | Contribution |
+|------|--------------|
+| Bhumika | UI |
+| Aryan | UI |
+| Vijay Prakash | Import / Export (JSON & CSV) |
+| Chandan | Add / Delete transactions |
+| Prince | Period filter |
+| Ankit | Charts |
+
+---
+
 ## ♿ Accessibility
 
 - All interactive elements have `aria-label` or visible labels
@@ -157,4 +170,3 @@ The UI uses a warm, earthy colour palette defined as CSS custom properties:
 - Focus is returned to the label field after form submit
 
 ---
-
